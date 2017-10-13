@@ -1,7 +1,7 @@
 version: 1
 
 root:
-  level: INFO
+  level: DEBUG
   handlers: [console, file]
 
 formatters:
@@ -18,5 +18,5 @@ handlers:
     level: DEBUG
     class: logging.FileHandler
     formatter: simple
-    filename: log.log
+    filename: d:\fdroid\log.log
 
