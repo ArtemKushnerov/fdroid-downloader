@@ -20,7 +20,8 @@ from modules.project_filter import ProjectFilter
 
 def main():
     project_names = os.listdir(config.repo_dir)
-    with open('done_list.txt', 'a+') as done_list_file:
+    done_list_path = os.path.join(config.results_dir, 'done_list.txt')
+    with open(done_list_path, 'a+') as done_list_file:
         done_project_names = get_done_project_names(done_list_file)
         logging.info('================================================================================================================================================')
         logging.info(f'DONE LIST SIZE: {len(done_project_names)}')

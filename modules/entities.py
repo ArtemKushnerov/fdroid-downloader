@@ -5,7 +5,7 @@ import re
 import logging
 
 import conf.config as config
-from modules.exceptions import NoIncludedModulesFoundException, AbsentApkException
+from modules.exceptions import AbsentApkException
 
 
 class Project:
@@ -29,8 +29,8 @@ class Project:
             if app_dir.startswith(':'):
                 app_dir = app_dir[1:]
         else:
-            raise NoIncludedModulesFoundException(f'No included modules found in {self.path}/settings.gradle ')
-        logging.debug(f'app_dir={app_dir}')
+            logging.warning(f'{self.name}: No included modules found in {self.path}/settings.gradle.')
+            app_dir = ''
         return app_dir
 
 

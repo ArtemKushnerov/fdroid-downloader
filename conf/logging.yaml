@@ -17,5 +17,5 @@ handlers:
     level: DEBUG
     class: logging.FileHandler
     formatter: simple
-    filename: log.log
+    filename: d:\fdroid_results\log.log
 
