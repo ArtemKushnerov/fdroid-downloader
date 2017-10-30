@@ -1,0 +1,182 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.3'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'jacoco'
+
+def coverageSourceDirs = [
+  '../app/src/main/java'
+]
+
+jacoco{
+  toolVersion = "0.7.7.201606060606"
+}
+
+task jacocoTestReport(type: JacocoReport) {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+    classDirectories = fileTree(
+            dir: './build/intermediates/classes/debug',
+            excludes: ['**/R*.class',
+                       '**/*$InjectAdapter.class',
+                       '**/*$ModuleAdapter.class',
+                       '**/*$ViewInjector*.class'
+            ])
+    sourceDirectories = files(coverageSourceDirs)
+    executionData = files("$buildDir/outputs/code-coverage/connected/coverage.exec")
+    doFirst {
+        new File("$buildDir/intermediates/classes/").eachFileRecurse { file ->
+            if (file.name.contains('$$')) {
+                file.renameTo(file.path.replace('$$', '$'))
+            }
+        }
+    }
+}
+
+
+apply from: rootProject.file('gradle/codequality.gradle')
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+        versionCode 47
+        versionName "1.8.6"
+
+        minSdkVersion 10
+        targetSdkVersion 19
+
+        buildConfigField 'String', 'BUILD_TAG', '"' + getBuildTag() + '"'
+        buildConfigField 'String', 'OWM_API_KEY', '"' + getOpenWeatherMapApiKey() + '"'
+        buildConfigField 'boolean', 'ENABLE_WEATHER', 'true'
+
+        def buildSuffix = getBuildSuffix(versionName, versionCode)
+        applicationVariants.all { variant ->
+            def file = variant.outputs[0].outputFile
+            variant.outputs[0].outputFile = new File(file.parent, file.name.replace(".apk", "-" + buildSuffix + ".apk"))
+        }
+    }
+
+    if (project.hasProperty('signingKeyStoreFile')) {
+        signingConfigs {
+            release {
+                storeFile     file(signingKeyStoreFile)
+                storePassword signingKeyStorePassword
+                keyAlias      signingKeyAlias
+                keyPassword   signingKeyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+          testCoverageEnabled=true
+        }
+        release {
+            minifyEnabled true
+            proguardFile 'proguard-project.txt'
+            if (project.hasProperty('signingKeyStoreFile')) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    if (rootProject.hasProperty("lintAbortOnError") && lintAbortOnError == 'false') {
+        lintOptions {
+            abortOnError false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+
+def getBuildSuffix(versionName, versionCode) {
+    def suffix = versionName + '-' + versionCode
+    if (System.getenv()['BUILD_NUMBER'] != null) {
+        suffix += '-b' + System.getenv()['BUILD_NUMBER']
+    }
+    return suffix
+}
+
+def getBuildTag() {
+    def tag = ''
+    if (System.getenv()['BUILD_NUMBER'] != null) {
+        tag += 'b' + System.getenv()['BUILD_NUMBER']
+    } else {
+        tag += 'l'
+    }
+    tag += '@' + new Date().format('yyyyMMdd')
+    return tag
+}
+
+def getOpenWeatherMapApiKey() {
+    if (project.hasProperty('owmApiKey')) {
+        return owmApiKey
+    } else {
+        def apiKeyFile = file('default_owm_api_key');
+        if (apiKeyFile.isFile()) {
+          return apiKeyFile.text.trim()
+        }
+    }
+    return 'NOKEY'
+}
+
+///////////////////////////////////////////////////
+// Dependencies
+
+repositories {
+    mavenCentral()
+}
+
+dependencies{
+    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+    compile 'com.android.support:support-v4:19.1.0'
+    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'net.danlew:android.joda:2.9.4.1'
+}
+
+
+///////////////////////////////////////////////////
+// Checkstyle
+
+task checkstyleDebug(type: Checkstyle, dependsOn: 'compileDebugSources') {
+    source = fileTree('src/main/java/')
+    classpath = files('build/intermediates/classes/debug')
+}
+check.dependsOn checkstyleDebug
+
+///////////////////////////////////////////////////
+// Findbugs
+
+task findbugsDebug(type: FindBugs, dependsOn: 'compileDebugSources') {
+    source = fileTree('src/main/java/')
+    classes = fileTree('build/intermediates/classes/debug')
+    classpath = files() // empty classpath!
+    effort = 'max'
+    excludeFilter = rootProject.file('config/findbugs/androidExcludeFilter.xml')
+}
+check.dependsOn findbugsDebug
+
+///////////////////////////////////////////////////
+// PMD
+
+task pmd(type: Pmd) {
+    source = fileTree('src/main/java/')
+    ruleSets = ['java-basic', 'java-braces', 'java-android']
+}
+check.dependsOn 'pmd'

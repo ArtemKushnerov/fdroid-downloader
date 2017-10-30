@@ -9,10 +9,11 @@ class JsonWriter:
         self.packages = packages
 
     def write_to_json(self):
+        document = {}
+        records = []
         for package in self.packages:
-            records = []
             record = {"path": package.path, "name": package.name, "gradle_version": package.gradle_version}
             records.append(record)
             document = {"packages": records}
-            with open(os.path.join(config.results_dir, 'packages.json'), 'w') as packages_file:
-                json.dump(document, packages_file, indent=2)
+        with open(os.path.join(config.results_dir, 'packages.json'), 'w') as packages_file:
+            json.dump(document, packages_file, indent=2)

@@ -18,7 +18,6 @@ from conf import config
 def main():
 
     package_names = os.listdir(config.repo_dir)
-    # package_names = ['com.danielkim.soundrecorder']
 
     with open('done_list.txt', 'a+') as done_list:
         done_list.seek(0)
@@ -31,7 +30,6 @@ def main():
         done_list.seek(0)
         fail = done_list.read().count('FAIL')
         size = len(package_names)
-        #todo better implement filter
         for name in set(package_names) - set(skip_package_names):
             package_path = config.repo_dir + '\\' + name
             if GradleProjectDetector(package_path).is_gradle_project():
@@ -41,7 +39,7 @@ def main():
                     logging.info(f'{name}: {counter} OF {size}, FAILS={fail}')
                     package = Package(name)
 
-                    add_properties(package)
+                    add_local_properties(package)
 
                     package.gradle_version = GradleVersionExtractor(package).extract_gradle_version()
                     assembler = ApkAssembler(package)
@@ -74,10 +72,10 @@ def main():
     logging.info(f'{counter} gradle projects of {size} packages processed, {fail} failed')
 
 
-def add_properties(package):
-    sdk_dir = r'sdk.dir=c:\\Users\\artsiom.kushniarou\\AppData\\Local\\Android\\sdk'
-    sdk_location = r'sdk-location=c:\\Users\\artsiom.kushniarou\\AppData\\Local\\Android\\sdk'
-    ndk_dir = r'ndk-dir=c:\\Users\\artsiom.kushniarou\\AppData\\Local\\Android\\sdk\\ndk-bundle'
+def add_local_properties(package):
+    sdk_dir = f'sdk.dir={sdk_dir}'
+    sdk_location = f'sdk-location={sdk_dir}'
+    ndk_dir = f'ndk-dir={ndk_dir}'
     with open(f'{package.path}/local.properties', 'w') as prop_file:
         prop_file.writelines([sdk_dir + '\n', sdk_location + '\n', ndk_dir])
 

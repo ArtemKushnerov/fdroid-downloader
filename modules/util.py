@@ -9,6 +9,11 @@ import conf.config as config
 
 
 def move_apk_to_results_dir(apk):
+    logging.debug(apk.instrumented)
+    msg = 'MOVE'
+    if apk.instrumented:
+        msg += ' INSTRUMENTED'
+    logging.info(f'{apk.package.name}: {msg}')
     if not os.path.exists(apk.path):
         raise AbsentApkException
     apk_name = apk.package.name

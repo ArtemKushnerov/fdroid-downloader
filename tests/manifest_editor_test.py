@@ -2,24 +2,25 @@ import unittest
 
 import shutil
 
+import util
 from conf import config
-from modules.entities import Package
 
 from modules.manifest import ManifestEditor, Manifest
 
 
 class TestManifestEditor(unittest.TestCase):
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         manifest_path = '{}/{}/resources/AndroidManifest.xml'.format(config.root_dir, 'tests')
         copy_manifest_path = '{}/{}/resources/AndroidManifest.xml_copy'.format(config.root_dir, 'tests')
 
-        shutil.copyfile(copy_manifest_path, manifest_path)
-        shutil.rmtree(copy_manifest_path, ignore_errors=True)
+        # shutil.copyfile(copy_manifest_path, manifest_path)    def setUp(self):
+        util.setup_logging()
 
     def test_add_permission_tag(self):
         manifest_path = '{}/{}/resources/AndroidManifest.xml'.format(config.root_dir, 'tests')
-        manifest = Manifest(manifest_path=manifest_path)
+        manifest = Manifest(manifest_path=manifest_path, package_name='test.package')
         editor = ManifestEditor(manifest)
         editor.add_permission_tag()
         manifest.write()
@@ -32,7 +33,7 @@ class TestManifestEditor(unittest.TestCase):
 
     def test_add_instrumentation_tag(self):
         manifest_path = '{}/{}/resources/AndroidManifest.xml'.format(config.root_dir, 'tests')
-        manifest = Manifest(manifest_path=manifest_path, package=Package('test.package'))
+        manifest = Manifest(manifest_path=manifest_path, package_name='test.package')
         editor = ManifestEditor(manifest)
         editor.add_instrumentation_tag()
         manifest.write()

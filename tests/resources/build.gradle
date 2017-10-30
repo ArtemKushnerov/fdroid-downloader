@@ -9,6 +9,47 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'jacoco'
+
+def coverageSourceDirs = [
+  '../app/src/main/java'
+]
+
+jacoco{
+  toolVersion = "0.7.7.201606060606"
+}
+
+task jacocoTestReport(type: JacocoReport) {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+    classDirectories = fileTree(
+            dir: './build/intermediates/classes/debug',
+            excludes: ['**/R*.class',
+                       '**/*$InjectAdapter.class',
+                       '**/*$ModuleAdapter.class',
+                       '**/*$ViewInjector*.class'
+            ])
+    sourceDirectories = files(coverageSourceDirs)
+    executionData = files("$buildDir/outputs/code-coverage/connected/coverage.exec")
+    doFirst {
+        new File("$buildDir/intermediates/classes/").eachFileRecurse { file ->
+            if (file.name.contains('$$')) {
+                file.renameTo(file.path.replace('$$', '$'))
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
 
 apply from: rootProject.file('gradle/codequality.gradle')
 
@@ -46,6 +87,9 @@ android {
     }
 
     buildTypes {
+        debug {
+          testCoverageEnabled=true
+        }
         release {
             minifyEnabled true
             proguardFile 'proguard-project.txt'

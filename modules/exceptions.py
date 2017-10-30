@@ -7,7 +7,12 @@ class InvalidGradleVersionError(FdroidCompilerException):
 
 
 class AbsentGradleVersionException(FdroidCompilerException):
-    pass
+
+    def __init__(self, package_name):
+        self.package_name = package_name
+
+    def __str__(self):
+        return f'Gradle version is not found for package {self.package_name}'
 
 
 class AbsentApkException(FdroidCompilerException):
@@ -19,6 +24,22 @@ class NoIncludedModulesFoundException(FdroidCompilerException):
 
 
 class BuildException(FdroidCompilerException):
+    pass
+
+
+class ManifestEditingException(FdroidCompilerException):
+    pass
+
+
+class PackageNameNotProvidedException(FdroidCompilerException):
+    pass
+
+
+class PackagePathNotProvidedException(FdroidCompilerException):
+    pass
+
+
+class NoSettingsGradleException(FdroidCompilerException):
     pass
 
 
