@@ -31,11 +31,11 @@ class ManifestEditingException(FdroidCompilerException):
     pass
 
 
-class PackageNameNotProvidedException(FdroidCompilerException):
+class ProjectNameNotProvidedException(FdroidCompilerException):
     pass
 
 
-class PackagePathNotProvidedException(FdroidCompilerException):
+class ProjectPathNotProvidedException(FdroidCompilerException):
     pass
 
 

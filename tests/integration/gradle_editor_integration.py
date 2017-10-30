@@ -4,7 +4,7 @@ import shutil
 
 import re
 
-from modules.entities import Package
+from modules.entities import Project
 from conf import config
 from modules.gradle.gradle_editor import GradleEditor
 
@@ -19,7 +19,7 @@ class TestGradleEditor(unittest.TestCase):
     #     shutil.rmtree(copy_gradle_path, ignore_errors=True)
 
     def test_edit_build_file(self):
-        package = Package('name', app_dir='test')
+        package = Project('name', app_dir='test')
         package.app_path = f'{config.root_dir}/tests/resources/'
         editor = GradleEditor(package)
         editor.edit_build_file()

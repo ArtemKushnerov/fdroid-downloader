@@ -7,27 +7,27 @@ from conf import config
 
 
 class JsonWriter:
-    def __init__(self, packages):
-        self.packages = packages
-        self.json_path = os.path.join(config.results_dir, 'packages.json')
+    def __init__(self, projects):
+        self.projects = projects
+        self.json_path = os.path.join(config.results_dir, 'projects.json')
         self.document = self.read()
 
     def save_to_json(self):
         logging.info('=============================================================================================================================================================')
         logging.info('SAVE TO JSON')
-        for package in self.packages:
-            record = {"path": package.path, "name": package.name, "gradle_version": package.gradle_version}
-            self.document["packages"].append(record)
+        for project in self.projects:
+            record = {"path": project.path, "name": project.name, "gradle_version": project.gradle_version}
+            self.document["projects"].append(record)
             logging.debug(self.document)
         self.write()
 
     def read(self):
-        document = {"packages": []}
+        document = {"projects": []}
         if os.path.exists(self.json_path):
-            with open(self.json_path) as packages_file:
-                document = json.load(packages_file)
+            with open(self.json_path) as projects_file:
+                document = json.load(projects_file)
         return document
 
     def write(self):
-        with open(self.json_path, 'w') as packages_file:
-            json.dump(self.document, packages_file, indent=2)
+        with open(self.json_path, 'w') as projects_file:
+            json.dump(self.document, projects_file, indent=2)

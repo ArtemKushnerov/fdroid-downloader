@@ -1,5 +1,5 @@
 root_dir = 'C:/Workspace/fdroid-downloader'
-repo_dir = r'C:\Workspace\fdroid-downloader'
+repo_dir = r'C:\repo'
 results_dir = r'C:\Workspace\fdroid-downloader\result'
 resources_dir = 'C:/Workspace/fdroid-downloader/resources'
 result_json_file = 'results.json'

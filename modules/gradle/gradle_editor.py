@@ -14,17 +14,17 @@ class GradleEditor:
     with open(config.resources_dir + '/jacoco_task.txt') as jacoco_task_file:
         JACOCO_TASK_TEXT = jacoco_task_file.read()
 
-    def __init__(self, package=None, content=None):
-        self.package = package
+    def __init__(self, project=None, content=None):
+        self.project = project
         if content is not None:
             self.content = content
         else:
-            self.build_file_path = f'{package.app_path}/build.gradle'
+            self.build_file_path = f'{project.app_path}/build.gradle'
             with open(self.build_file_path) as gradle_file:
                 self.content = gradle_file.read()
 
     def edit_build_file(self):
-        logging.debug(f'{self.package.name}: EDIT BUILD FILE')
+        logging.debug(f'{self.project.name}: EDIT BUILD FILE')
         self.insert_apply_plugin()
         self.insert_coverage_source_dir_definition()
         self.insert_jacoco_version()

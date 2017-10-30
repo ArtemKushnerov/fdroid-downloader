@@ -8,7 +8,7 @@ import conf.config as config
 from modules.exceptions import NoIncludedModulesFoundException, AbsentApkException
 
 
-class Package:
+class Project:
     def __init__(self, name, app_dir=None):
         self.name = name
         self.path = os.path.join(config.repo_dir, name)
@@ -35,17 +35,17 @@ class Package:
 
 
 class Apk:
-    def __init__(self, package, instrumented):
-        self.package = package
+    def __init__(self, project, instrumented):
+        self.project = project
         self.instrumented = instrumented
-        apk_dir = f'{package.app_path}/build/outputs/apk'
+        apk_dir = f'{project.app_path}/build/outputs/apk'
         for dir_path, _, file_names in os.walk(apk_dir):
             for file_name in file_names:
                 logging.debug(file_name)
                 if 'debug' in file_name and file_name.endswith('.apk'):
                     self.path = os.path.join(dir_path, file_name)
                     return
-        raise AbsentApkException(f'Cannot find debug apk in the {package.app_path}/build/outputs/apk/')
+        raise AbsentApkException(f'Cannot find debug apk in the {project.app_path}/build/outputs/apk/')
 
 
 

@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 
 import logging
 
-from modules.exceptions import ManifestEditingException, PackageNameNotProvidedException, PackagePathNotProvidedException
+from modules.exceptions import ManifestEditingException, ProjectNameNotProvidedException, ProjectPathNotProvidedException
 
 
 class Manifest:
@@ -12,14 +12,14 @@ class Manifest:
         elif package:
             self.package_name = package.name
         else:
-            raise PackageNameNotProvidedException('Provide either package or package name')
+            raise ProjectNameNotProvidedException('Provide either package or package name')
 
         if manifest_path:
             self.manifest_path = manifest_path
         elif package:
             self.manifest_path = '{}/src/main/AndroidManifest.xml'.format(package.app_path)
         else:
-            raise PackagePathNotProvidedException('Provide either package or manifest path')
+            raise ProjectPathNotProvidedException('Provide either package or manifest path')
 
         ET.register_namespace('android', "http://schemas.android.com/apk/res/android")
         self.tree = ET.parse(self.manifest_path)

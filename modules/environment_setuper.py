@@ -3,8 +3,8 @@ from conf import config
 
 class EnvironmentSetuper:
 
-    def __init__(self, package):
-        self.package = package
+    def __init__(self, project):
+        self.package = project
 
     # noinspection PyMethodMayBeStatic
     def add_local_properties(self):
