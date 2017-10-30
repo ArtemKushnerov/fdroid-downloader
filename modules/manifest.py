@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 
 import logging
 
-from exceptions import ManifestEditingException, PackageNameNotProvidedException, PackagePathNotProvidedException
+from modules.exceptions import ManifestEditingException, PackageNameNotProvidedException, PackagePathNotProvidedException
 
 
 class Manifest:

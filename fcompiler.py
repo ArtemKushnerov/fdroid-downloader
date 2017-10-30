@@ -2,9 +2,9 @@ import os
 
 import logging
 
-import shutil
+import sys
 
-from json_util import JsonWriter
+from modules.json_util import JsonWriter
 from modules.entities import Package
 from modules.exceptions import FdroidCompilerException
 from modules.gradle.gradle_editor import GradleEditor
@@ -32,6 +32,7 @@ def main():
         done_list.seek(0)
         fail = done_list.read().count('FAIL')
         size = len(package_names)
+        package = None
         for name in set(package_names) - set(skip_package_names):
             package_path = config.repo_dir + '\\' + name
             if GradleProjectDetector(package_path).is_gradle_project():
@@ -65,6 +66,12 @@ def main():
                     logging.info(f'{name}: SUCCESS')
                     done_list.write(f'{name}: SUCCESS\n')
                     done_list.flush()
+                    JsonWriter(packages).write_to_json()
+                except KeyboardInterrupt:
+                    logging.info('Keyboard interrupt, revert changes to current project')
+                    os.chdir(package.path)
+                    os.system('git reset --hard HEAD && git clean -xfd')
+                    sys.exit()
                 except (FdroidCompilerException, BaseException):
                     logging.exception(f'{name}: FAIL')
                     fail += 1
