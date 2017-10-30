@@ -2,6 +2,8 @@ import os
 
 import logging
 
+import shutil
+
 from json_util import JsonWriter
 from modules.entities import Package
 from modules.exceptions import FdroidCompilerException

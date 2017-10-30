@@ -43,4 +43,7 @@ class NoSettingsGradleException(FdroidCompilerException):
     pass
 
 
+class BuildTimeOutException(FdroidCompilerException):
+    pass
+
 
