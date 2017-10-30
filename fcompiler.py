@@ -73,9 +73,9 @@ def main():
 
 
 def add_local_properties(package):
-    sdk_dir = f'sdk.dir={sdk_dir}'
-    sdk_location = f'sdk-location={sdk_dir}'
-    ndk_dir = f'ndk-dir={ndk_dir}'
+    sdk_dir = f'sdk.dir={config.sdk_dir}'
+    sdk_location = f'sdk-location={config.sdk_dir}'
+    ndk_dir = f'ndk-dir={config.ndk_dir}'
     with open(f'{package.path}/local.properties', 'w') as prop_file:
         prop_file.writelines([sdk_dir + '\n', sdk_location + '\n', ndk_dir])
 
