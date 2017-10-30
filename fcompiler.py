@@ -4,6 +4,7 @@ import logging
 
 import sys
 
+from modules.environment_setuper import EnvironmentSetuper
 from modules.json_util import JsonWriter
 from modules.entities import Package
 from modules.exceptions import FdroidCompilerException
@@ -26,7 +27,8 @@ def main():
         done_list_lines = done_list.readlines()
         skip_package_names = [line.split(': ')[0] for line in done_list_lines]
         logging.info('================================================================================================================================================')
-        logging.info(f'DONE LIST: {skip_package_names}')
+        logging.info(f'DONE LIST SIZE: {len(skip_package_names)}')
+        logging.debug(f'DONE LIST CONTENT: {skip_package_names}')
         packages = []
         counter = len(done_list_lines)
         done_list.seek(0)
@@ -42,7 +44,7 @@ def main():
                     logging.info(f'{name}: {counter} OF {size}, FAILS={fail}')
                     package = Package(name)
 
-                    add_local_properties(package)
+                    EnvironmentSetuper(package).add_local_properties()
 
                     package.gradle_version = GradleVersionExtractor(package).extract_gradle_version()
                     assembler = ApkAssembler(package)
@@ -66,27 +68,24 @@ def main():
                     logging.info(f'{name}: SUCCESS')
                     done_list.write(f'{name}: SUCCESS\n')
                     done_list.flush()
-                    JsonWriter(packages).write_to_json()
                 except KeyboardInterrupt:
                     logging.info('Keyboard interrupt, revert changes to current project')
-                    os.chdir(package.path)
-                    os.system('git reset --hard HEAD && git clean -xfd')
+                    reset_project_state(package)
+                    JsonWriter(packages).save_to_json()
                     sys.exit()
                 except (FdroidCompilerException, BaseException):
                     logging.exception(f'{name}: FAIL')
                     fail += 1
                     done_list.write(f'{name}: FAIL\n')
                     done_list.flush()
-    JsonWriter(packages).write_to_json()
+    JsonWriter(packages).save_to_json()
     logging.info(f'{counter} gradle projects of {size} packages processed, {fail} failed')
 
 
-def add_local_properties(package):
-    sdk_dir = f'sdk.dir={config.sdk_dir}'
-    sdk_location = f'sdk-location={config.sdk_dir}'
-    ndk_dir = f'ndk-dir={config.ndk_dir}'
-    with open(f'{package.path}/local.properties', 'w') as prop_file:
-        prop_file.writelines([sdk_dir + '\n', sdk_location + '\n', ndk_dir])
+def reset_project_state(package):
+    os.chdir(package.path)
+    os.system('git reset --hard HEAD && git clean -xfd')
+
 
 if __name__ == '__main__':
     util.setup_logging()

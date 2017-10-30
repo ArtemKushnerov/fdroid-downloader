@@ -1,6 +1,6 @@
 root_dir = 'C:/Workspace/fdroid-downloader'
-repo_dir = r'd:\fdroid'
-results_dir = 'd:\\fdroid_results'
+repo_dir = r'C:\Workspace\fdroid-downloader'
+results_dir = r'C:\Workspace\fdroid-downloader\result'
 resources_dir = 'C:/Workspace/fdroid-downloader/resources'
 result_json_file = 'results.json'
 gradle23_executable_path = 'c:\\Gradle\\gradle-2.3\\bin\\gradle'

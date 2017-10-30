@@ -22,7 +22,7 @@ class TestCompiler(unittest.TestCase):
         os.system('git clean -fxd')
 
     def test_write_json(self):
-        compiler.write_to_json('foo', 'bar', 'baz')
+        compiler.save_to_json('foo', 'bar', 'baz')
 
         with open(path.join(config.results_dir, 'packages.json')) as packages_file:
             actual_json_content = packages_file.read()
