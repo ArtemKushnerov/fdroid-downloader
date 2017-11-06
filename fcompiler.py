@@ -20,18 +20,24 @@ from modules.project_filter import ProjectFilter
 
 def main():
     project_names = os.listdir(config.repo_dir)
+    project_names = ['com.utyf.pmetro']
+    ignore_done_liset = True
     done_list_path = os.path.join(config.results_dir, 'done_list.txt')
     with open(done_list_path, 'a+') as done_list_file:
-        done_project_names = get_done_project_names(done_list_file)
-        logging.info('================================================================================================================================================')
-        logging.info(f'DONE LIST SIZE: {len(done_project_names)}')
-        logging.debug(f'DONE LIST CONTENT: {done_project_names}')
-
-        counter = len(done_project_names)
-        fail_counter = get_fail_counter(done_list_file)
+        projects_to_process = set(project_names)
+        counter = 0
+        fail_counter = 0
+        if not ignore_done_liset:
+            done_project_names = get_done_project_names(done_list_file)
+            logging.info('================================================================================================================================================')
+            logging.info(f'DONE LIST SIZE: {len(done_project_names)}')
+            logging.debug(f'DONE LIST CONTENT: {done_project_names}')
+            projects_to_process = projects_to_process - set(done_project_names)
+            counter = len(done_project_names)
+            fail_counter = get_fail_counter(done_list_file)
 
         processed_projects = []
-        gradle_projects = ProjectFilter(set(project_names) - set(done_project_names)).get_gradle_projects()
+        gradle_projects = ProjectFilter(projects_to_process).get_gradle_projects()
         size = len(gradle_projects)
         for project in gradle_projects:
             counter += 1

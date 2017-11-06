@@ -1,3 +1,4 @@
+import os
 import xml.etree.ElementTree as ET
 
 import logging
@@ -17,7 +18,8 @@ class Manifest:
         if manifest_path:
             self.manifest_path = manifest_path
         elif package:
-            self.manifest_path = '{}/src/main/AndroidManifest.xml'.format(package.app_path)
+            manifest_relative_path = 'src/main/AndroidManifest.xml'
+            self.manifest_path = os.path.join(package.app_path, manifest_relative_path)
         else:
             raise ProjectPathNotProvidedException('Provide either package or manifest path')
 
@@ -47,7 +49,6 @@ class ManifestEditor:
             self.add_permission_tag()
             self.add_instrumentation_tag()
             self.manifest.write()
-
         except BaseException:
             raise ManifestEditingException(BaseException)
 
