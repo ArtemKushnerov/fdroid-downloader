@@ -20,7 +20,7 @@ from modules.project_filter import ProjectFilter
 
 def main():
     project_names = os.listdir(config.repo_dir)
-    project_names = ['com.utyf.pmetro']
+    # project_names = ['com.utyf.pmetro']
     ignore_done_liset = True
     done_list_path = os.path.join(config.results_dir, 'done_list.txt')
     with open(done_list_path, 'a+') as done_list_file:
@@ -36,7 +36,6 @@ def main():
             counter = len(done_project_names)
             fail_counter = get_fail_counter(done_list_file)
 
-        processed_projects = []
         gradle_projects = ProjectFilter(projects_to_process).get_gradle_projects()
         size = len(gradle_projects)
         for project in gradle_projects:
@@ -65,22 +64,19 @@ def main():
                 instrumented_apk = assembler.assemble_apk(is_instrumented=True)
                 util.move_apk_to_results_dir(instrumented_apk)
 
-                processed_projects.append(project)
-
                 logging.info(f'{project.name}: SUCCESS')
                 done_list_file.write(f'{project.name}: SUCCESS\n')
                 done_list_file.flush()
+                JsonWriter(project).save_to_json()
             except KeyboardInterrupt:
                 logging.info('Keyboard interrupt, revert changes to current project')
                 reset_project_state(project)
-                JsonWriter(processed_projects).save_to_json()
                 sys.exit()
             except (FdroidCompilerException, BaseException):
                 logging.exception(f'{project.name}: FAIL')
                 fail_counter += 1
                 done_list_file.write(f'{project.name}: FAIL\n')
                 done_list_file.flush()
-    JsonWriter(processed_projects).save_to_json()
     logging.info(f'{counter} gradle processed_projects of {size} processed_projects processed, {fail_counter} failed')
 
 

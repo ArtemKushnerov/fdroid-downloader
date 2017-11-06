@@ -1,20 +1,24 @@
 import json
-import os
-
 import logging
+import os
 
 from conf import config
 
 
 class JsonWriter:
-    def __init__(self, projects):
+    def __init__(self, *projects):
         self.projects = projects
         self.json_path = os.path.join(config.results_dir, 'projects.json')
         self.document = self.read()
 
     def save_to_json(self):
-        logging.info('=============================================================================================================================================================')
-        logging.info('SAVE TO JSON')
+        msg = 'SAVE TO JSON'
+        projects_count = len(self.projects)
+        if projects_count == 1:
+            msg = f'{self.projects[0].name}: ' + msg
+        else:
+            msg += f'{projects_count} PROJECTS'
+        logging.info(msg)
         for project in self.projects:
             record = {"path": project.path, "name": project.name, "gradle_version": project.gradle_version}
             self.document["projects"].append(record)
