@@ -20,7 +20,6 @@ from modules.project_filter import ProjectFilter
 
 def main():
     project_names = os.listdir(config.repo_dir)
-    # project_names = ['com.utyf.pmetro']
     ignore_done_liset = True
     done_list_path = os.path.join(config.results_dir, 'done_list.txt')
     with open(done_list_path, 'a+') as done_list_file:
@@ -99,6 +98,7 @@ def reset_project_state(project):
         logging.info(f'{project.name}: RESET PROJECT STATE')
         out = subprocess.check_output('git reset --hard HEAD && git clean -xfd', shell=True, stderr=subprocess.STDOUT)
         logging.debug(out.decode('utf-8'))
+
 
 if __name__ == '__main__':
     util.setup_logging()
