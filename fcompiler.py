@@ -20,13 +20,13 @@ from modules.project_filter import ProjectFilter
 
 def main():
     project_names = os.listdir(config.repo_dir)
-    ignore_done_liset = True
+    ignore_done_list = False
     done_list_path = os.path.join(config.results_dir, 'done_list.txt')
     with open(done_list_path, 'a+') as done_list_file:
         projects_to_process = set(project_names)
         counter = 0
         fail_counter = 0
-        if not ignore_done_liset:
+        if not ignore_done_list:
             done_project_names = get_done_project_names(done_list_file)
             logging.info('================================================================================================================================================')
             logging.info(f'DONE LIST SIZE: {len(done_project_names)}')
