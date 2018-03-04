@@ -30,7 +30,7 @@ import java.lang.reflect.Method;
 
 public class EmmaInstrumentation extends Instrumentation {
     private static final String TAG = "EmmaInstrumentation";
-//    private static final boolean LOGD = true;
+    private static final boolean LOGD = true;
 
     private static final int MSG_GENERATE_COVERAGE = 1;
     private static final int MSG_REPORT_EXCEPTION = 2;
@@ -290,9 +290,9 @@ public class EmmaInstrumentation extends Instrumentation {
 
             if (mCoverage) {
                 final long currentTime = System.currentTimeMillis();
-                String coverageFileName = PREFIX_ONSTOP  + "_coverage_" + String.valueOf(currentTime) + ".ec";
+                String filename = "coverage.exec";//PREFIX_ONSTOP  + "_coverage_" + String.valueOf(currentTime) + ".ec";
                 Message msg = Message.obtain(mWriterThreadHandler, MSG_GENERATE_COVERAGE);
-                msg.obj = coverageFileName;
+                msg.obj = filename;
                 msg.sendToTarget();
             }
 
